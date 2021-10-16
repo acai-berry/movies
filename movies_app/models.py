@@ -1,3 +1,4 @@
+from django.core import validators
 from django.db import models
 
 # Create your models here.
@@ -5,6 +6,7 @@ from django.db import models
 
 # Create your models here.
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
@@ -12,7 +14,11 @@ class Genre(models.Model):
     title = models.CharField(max_length=255)
     featured_film = models.ForeignKey('Film', on_delete=models.SET_NULL, null=True, related_name='+')
     
+    def __str__(self) -> str:
+        return self.title
 
+    class Meta:
+        ordering = ['title']
 
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = 'B'
@@ -30,15 +36,24 @@ class Customer(models.Model):
     birth_date = models.DateField(null=True)
     membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
 
+    def __str__(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+
+    class Meta:
+        ordering = ['first_name', 'last_name']
 
 class Film(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    description = models.TextField(null=True, blank=True)
+    price = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2,
+        validators = [MinValueValidator(1)])
     last_update = models.DateTimeField(auto_now=True)
     genre = models.ForeignKey(Genre, on_delete=models.PROTECT)
-    
+
+
 
 
 class Order(models.Model):
