@@ -53,6 +53,9 @@ class Film(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     genre = models.ForeignKey(Genre, on_delete=models.PROTECT)
 
+    def __str__(self) -> str:
+        return self.title
+
 
 
 

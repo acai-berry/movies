@@ -23,6 +23,10 @@ class PriceFilter(admin.SimpleListFilter):
             elif self.value() == '>=10':
                 return queryset.filter(price__gte=10)
 
+
+
+
+
 @admin.register(models.Film)
 class FilmAdmin(admin.ModelAdmin):
     autocomplete_fields = ['genre']
@@ -33,6 +37,8 @@ class FilmAdmin(admin.ModelAdmin):
     list_editable = ['price']
     list_per_page = 10
     list_filter = ['genre', 'last_update', PriceFilter]
+    search_fields = ['title']
+    
 
 
 
@@ -58,7 +64,6 @@ class CustomerAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(
             orders_count=Count('order')
         )
-
     
 
 @admin.register(models.Genre)
@@ -79,9 +84,20 @@ class GenreAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(films_count=Count('film')) 
 
+
+class OrderItemInline(admin.TabularInline):
+    autocomplete_fields = ['film']
+    model = models.Order_Item
+    min_num = 1
+    max_num = 10
+    extra = 0
+
+
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['customer']
-    list_display = ['placed_at', 'payment_status', 'customer']
+    inlines = [OrderItemInline]
+    list_display = ['id', 'placed_at', 'payment_status', 'customer']
     list_per_page = 10
 
