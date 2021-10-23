@@ -82,7 +82,7 @@ class GenreAdmin(admin.ModelAdmin):
         
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(films_count=Count('film')) 
+        return super().get_queryset(request).annotate(films_count=Count('films')) 
 
 
 class OrderItemInline(admin.TabularInline):

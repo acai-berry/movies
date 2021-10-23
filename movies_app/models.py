@@ -12,7 +12,7 @@ from django.db import models
 
 class Genre(models.Model):
     title = models.CharField(max_length=255)
-    featured_film = models.ForeignKey('Film', on_delete=models.SET_NULL, null=True, related_name='+')
+    featured_film = models.ForeignKey('Film', on_delete=models.SET_NULL, null=True, related_name='+', blank=True)
     
     def __str__(self) -> str:
         return self.title
@@ -51,11 +51,13 @@ class Film(models.Model):
         decimal_places=2,
         validators = [MinValueValidator(1)])
     last_update = models.DateTimeField(auto_now=True)
-    genre = models.ForeignKey(Genre, on_delete=models.PROTECT)
+    genre = models.ForeignKey(Genre, on_delete=models.PROTECT, related_name='films')
 
     def __str__(self) -> str:
         return self.title
 
+    # class Meta:
+    #     ordering = ['title']
 
 
 
@@ -75,7 +77,7 @@ class Order(models.Model):
 
 class Order_Item(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    film = models.ForeignKey(Film, on_delete=models.PROTECT)
+    film = models.ForeignKey(Film, on_delete=models.PROTECT, related_name='orderitems')
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
 class Address(models.Model):
