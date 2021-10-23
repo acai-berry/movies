@@ -1,10 +1,13 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
+from pprint import pprint
+
+
+router = DefaultRouter()
+router.register('films', views.FilmViewSet)
+router.register('genre', views.GenreViewSet)
+
 
 # URLConf
-urlpatterns = [
-    path('films/', views.film_list),
-    path('films/<int:id>/', views.film_detail),
-    path('genre/', views.genre_list, name='genre-list'),
-    path('genre/<int:id>/', views.genre_detail)
-]
+urlpatterns = router.urls

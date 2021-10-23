@@ -9,7 +9,7 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
         fields = ['id', 'title', 'films_count']
     
-    films_count = serializers.IntegerField(required=False)
+    films_count = serializers.IntegerField(read_only=True)
    
 
 class FilmSerializer(serializers.ModelSerializer):
