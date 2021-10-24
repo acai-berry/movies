@@ -1,18 +1,25 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.core.paginator import Page
 from django.db.models import Count
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.decorators import api_view
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import pagination
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
-from .models import Film, Genre, Order_Item
-from .serializers import FilmSerializer, GenreSerializer
+
+from movies_app.pagination import DefaultPagination
+from .filters import FilmFilter
+from .models import Film, Genre, Order_Item, Review
+from .serializers import FilmSerializer, GenreSerializer, ReviewSerializer
 
 class FilmViewSet(ModelViewSet):
     queryset = Film.objects.all()
     serializer_class = FilmSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = FilmFilter
+    pagination_class = DefaultPagination
+    search_fields = ['title', 'description']
+    ordering_fields = ['price', 'last_update']
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -34,14 +41,15 @@ class GenreViewSet(ModelViewSet):
                 status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
 
-    # def delete(self, request, pk):
-    #     genre = get_object_or_404(Genre.objects.annotate(
-    #         films_count=Count('films')), pk=pk)
-    #     if genre.films.count() > 0:
-    #         return Response({'error': 'Genre cannot be deleted because it has associated films'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #     genre.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        return Review.objects.filter(film_id=self.kwargs['film_pk'])
+
+    def get_serializer_context(self):
+        return {'film_id': self.kwargs['film_pk']}
 
 
    

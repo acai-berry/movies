@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.db.models import fields
 from rest_framework import serializers
 from movies_app import models
-from movies_app.models import Film, Genre
+from movies_app.models import Film, Genre, Review
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,3 +21,13 @@ class FilmSerializer(serializers.ModelSerializer):
 
     def calculate_tax(self, film: Film):
         return film.price * Decimal(1.1)
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'date', 'name', 'description']
+
+    def create(self, validated_data):
+        film_id = self.context['film_id']
+        return Review.objects.create(film_id = film_id, **validated_data)
+        

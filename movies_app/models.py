@@ -94,3 +94,10 @@ class Cart(models.Model):
 class Cart_Item(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
+
+
+class Review(models.Model):
+    film = models.ForeignKey(Film, on_delete=models.CASCADE, related_name='reviews')
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    date = models.DateField(auto_now_add=True)
