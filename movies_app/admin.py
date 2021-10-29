@@ -87,7 +87,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.TabularInline):
     autocomplete_fields = ['film']
-    model = models.Order_Item
+    model = models.OrderItem
     min_num = 1
     max_num = 10
     extra = 0

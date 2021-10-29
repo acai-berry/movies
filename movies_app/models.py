@@ -1,11 +1,3 @@
-from django.core import validators
-from django.db import models
-
-# Create your models here.
-from django.db import models
-
-# Create your models here.
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -56,10 +48,6 @@ class Film(models.Model):
     def __str__(self) -> str:
         return self.title
 
-    # class Meta:
-    #     ordering = ['title']
-
-
 
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
@@ -75,7 +63,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 
-class Order_Item(models.Model):
+class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     film = models.ForeignKey(Film, on_delete=models.PROTECT, related_name='orderitems')
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -91,9 +79,12 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class Cart_Item(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items', )
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [['cart', 'film']]
 
 
 class Review(models.Model):

@@ -5,10 +5,12 @@ from . import views
 router = routers.DefaultRouter()
 router.register('films', views.FilmViewSet, basename='films')
 router.register('genre', views.GenreViewSet)
+router.register('carts', views.CartViewSet)
 
 film_router = routers.NestedDefaultRouter(router, 'films', lookup='film')
 film_router.register('reviews', views.ReviewViewSet, basename='film-reviews')
 
+carts_router = routers.NestedDefaultRouter(router, 'carts', lookup='cart')
+carts_router.register('items', views.CartItemsViewSet, basename='cart-items')
 
-# URLConf
-urlpatterns = router.urls + film_router.urls
+urlpatterns = router.urls + film_router.urls + carts_router.urls
